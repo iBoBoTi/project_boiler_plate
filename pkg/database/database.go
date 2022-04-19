@@ -11,7 +11,8 @@ type Postgres struct {
 	pool *pgxpool.Pool
 }
 
-func ConnectDB(c *databaseConfig) (*Db, error) {
+// ConnectPostgres connects to the postgres database pool and assigns it the Db struct pool field returning Db
+func ConnectPostgres(c *databaseConfig) (*Db, error) {
 	logrus.Info("Connecting to PostgreSQL DB pool")
 	dns := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
