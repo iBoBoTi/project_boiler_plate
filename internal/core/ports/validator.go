@@ -1,4 +1,4 @@
-package validator
+package ports
 
 type Validator interface {
 	Validate(interface{}) error
