@@ -1,4 +1,4 @@
-package logger
+package ports
 
 type Logger interface {
 	Infof(format string, args ...interface{})
