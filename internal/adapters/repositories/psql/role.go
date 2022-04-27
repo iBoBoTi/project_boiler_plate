@@ -16,8 +16,24 @@ func NewRoleRepository(db *pgxpool.Pool) ports.RoleRepository {
 	return &roleRepository{db}
 }
 
-func (r *roleRepository) GetAllRoles() ([]*domain.Role, error) {
-	return nil, nil
+func (r *roleRepository) GetAllRoles() ([]domain.Role, error) {
+	roles := make([]domain.Role, 0)
+	queryString := `SELECT * FROM roles`
+	rows, err := r.db.Query(context.Background(), queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		role := domain.Role{}
+		err := rows.Scan(&role.ID, &role.Title, &role.Description, &role.CreatedAt, &role.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		roles = append(roles, role)
+	}
+
+	return roles, nil
 }
 
 func (r *roleRepository) GetRoleByID(id string) (*domain.Role, error) {
