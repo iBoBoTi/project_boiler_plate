@@ -31,12 +31,30 @@ func newGinServer(l ports.Logger, r *router.Router) *ginServer {
 }
 
 func (s *ginServer) setAppHandlers(router *gin.Engine) {
+	v1 := router.Group("/api/v1")
 	db, _ := database.NewDatabaseFactory(database.InstancePostgres)
+
+	//Permission
+	permissionRepo := psql.NewPermissionRepository(db.Pool)
+	permissionService := usecase.NewPermissionService(permissionRepo)
+	permissionHandler := api.NewPermissionHandler(permissionService)
+
+	permissionRouter := v1.Group("/permissions")
+	permissionRouter.POST("/", permissionHandler.CreatePermission)
+
+	//Role
+	roleRepo := psql.NewRoleRepository(db.Pool)
+	roleService := usecase.NewRoleService(roleRepo)
+	roleHandler := api.NewRoleHandler(roleService, permissionService, s.log)
+
+	roleRouter := v1.Group("/roles")
+	roleRouter.POST("/", roleHandler.CreateRole)
+
+	//User
 	userRepo := psql.NewUserRepository(db.Pool)
 	userService := usecase.NewUserService(userRepo)
 	userHandler := api.NewUserHandler(userService, s.log)
 
-	v1 := router.Group("/api/v1")
 	userRouter := v1.Group("/users")
 	userRouter.GET("/:id", userHandler.GetUserByID)
 	userRouter.POST("/", userHandler.CreateUser)
