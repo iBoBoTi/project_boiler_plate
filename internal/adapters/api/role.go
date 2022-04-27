@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
@@ -29,7 +28,6 @@ func (h *roleHandler) CreateRole(c *gin.Context) {
 	}
 
 	if err := h.roleService.CreateRole(&role); err != nil {
-		fmt.Println("i am here 2")
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -39,7 +37,15 @@ func (h *roleHandler) CreateRole(c *gin.Context) {
 
 func (h *roleHandler) GetRole(c *gin.Context) {}
 
-func (h *roleHandler) GetRoles(c *gin.Context) {}
+func (h *roleHandler) GetRoles(c *gin.Context) {
+	roles, err := h.roleService.GetAllRoles()
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"roles": roles})
+}
 
 func (h *roleHandler) AddPermissionToRole(c *gin.Context) {}
 
