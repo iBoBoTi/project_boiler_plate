@@ -18,7 +18,7 @@ func NewRoleService(roleRepo ports.RoleRepository) ports.RoleService {
 	}
 }
 
-func (r *roleService) GetAllRoles() ([]*domain.Role, error) {
+func (r *roleService) GetAllRoles() ([]domain.Role, error) {
 	return r.roleRepo.GetAllRoles()
 }
 func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
