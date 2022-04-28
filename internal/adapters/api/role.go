@@ -35,7 +35,16 @@ func (h *roleHandler) CreateRole(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Role created successfully"})
 }
 
-func (h *roleHandler) GetRole(c *gin.Context) {}
+func (h *roleHandler) GetRole(c *gin.Context) {
+	id := c.Param("id")
+	role, err := h.roleService.GetRoleByID(id)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"role": role})
+}
 
 func (h *roleHandler) GetRoles(c *gin.Context) {
 	roles, err := h.roleService.GetAllRoles()
