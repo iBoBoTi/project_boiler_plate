@@ -42,5 +42,5 @@ func (r *roleService) RemovePermission(id string, permission *domain.Permission)
 	return r.roleRepo.RemovePermission(id, permission)
 }
 func (r *roleService) DeleteRole(id string) error {
-	return r.roleRepo.DeleteRole(id)
+	return r.roleRepo.DeleteRole(strings.TrimSpace(id))
 }
