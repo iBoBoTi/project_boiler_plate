@@ -22,7 +22,7 @@ func (r *roleService) GetAllRoles() ([]domain.Role, error) {
 	return r.roleRepo.GetAllRoles()
 }
 func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
-	return r.roleRepo.GetRoleByID(id)
+	return r.roleRepo.GetRoleByID(strings.TrimSpace(id))
 }
 
 func (r *roleService) CreateRole(role *domain.Role) error {
