@@ -40,7 +40,10 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	permissionHandler := api.NewPermissionHandler(permissionService)
 
 	permissionRouter := v1.Group("/permissions")
+	permissionRouter.GET("/:id", permissionHandler.GetPermissionByID)
 	permissionRouter.POST("/", permissionHandler.CreatePermission)
+	permissionRouter.GET("/", permissionHandler.GetPermissions)
+	permissionRouter.DELETE("/:id", permissionHandler.DeletePermission)
 
 	//Role
 	roleRepo := psql.NewRoleRepository(db.Pool)
