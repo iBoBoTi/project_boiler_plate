@@ -27,7 +27,7 @@ func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
 
 func (r *roleService) CreateRole(role *domain.Role) error {
 	role.ID = uuid.New().String()
-	role.Title = strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(role.Title), " ", "_"))
+	role.Title = strings.ToLower(strings.ReplaceAll(strings.TrimSpace(role.Title), " ", "_"))
 	_, err := r.roleRepo.GetRoleByName(role.Title)
 	if err != nil {
 		return r.roleRepo.CreateRole(role)
