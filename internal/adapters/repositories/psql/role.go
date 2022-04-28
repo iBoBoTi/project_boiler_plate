@@ -37,7 +37,13 @@ func (r *roleRepository) GetAllRoles() ([]domain.Role, error) {
 }
 
 func (r *roleRepository) GetRoleByID(id string) (*domain.Role, error) {
-	return nil, nil
+	role := domain.Role{}
+	queryString := `SELECT * FROM roles WHERE id = $1`
+	err := r.db.QueryRow(context.Background(), queryString, id).Scan(&role.ID, &role.Title, &role.Description, &role.CreatedAt, &role.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &role, nil
 }
 
 func (r *roleRepository) GetRoleByName(name string) (*domain.Role, error) {
