@@ -75,5 +75,13 @@ func (r *roleRepository) RemovePermission(id string, permission *domain.Permissi
 	return nil
 }
 func (r *roleRepository) DeleteRole(id string) error {
+	queryString := `DELETE FROM roles WHERE id = $1`
+	cmdTag, err := r.db.Exec(context.Background(), queryString, id)
+	if err != nil {
+		return err
+	}
+	if cmdTag.RowsAffected() != 1 {
+		return errors.New("role not deleted")
+	}
 	return nil
 }
