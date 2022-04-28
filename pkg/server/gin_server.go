@@ -48,7 +48,9 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	roleHandler := api.NewRoleHandler(roleService, permissionService, s.log)
 
 	roleRouter := v1.Group("/roles")
+	roleRouter.GET("/:id", roleHandler.GetRole)
 	roleRouter.POST("/", roleHandler.CreateRole)
+	roleRouter.GET("/", roleHandler.GetRoles)
 
 	//User
 	userRepo := psql.NewUserRepository(db.Pool)
