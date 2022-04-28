@@ -42,7 +42,7 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	permissionRouter := v1.Group("/permissions")
 	permissionRouter.GET("/:id", permissionHandler.GetPermissionByID)
 	permissionRouter.POST("/", permissionHandler.CreatePermission)
-	permissionRouter.GET("/", permissionHandler.GetPermissions)
+	permissionRouter.GET("/", permissionHandler.GetAllPermissions)
 	permissionRouter.DELETE("/:id", permissionHandler.DeletePermission)
 
 	//Role
