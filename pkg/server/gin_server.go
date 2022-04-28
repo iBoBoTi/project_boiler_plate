@@ -51,6 +51,7 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	roleRouter.GET("/:id", roleHandler.GetRole)
 	roleRouter.POST("/", roleHandler.CreateRole)
 	roleRouter.GET("/", roleHandler.GetRoles)
+	roleRouter.DELETE("/:id", roleHandler.DeleteRole)
 
 	//User
 	userRepo := psql.NewUserRepository(db.Pool)
