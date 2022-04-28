@@ -60,4 +60,12 @@ func (h *roleHandler) AddPermissionToRole(c *gin.Context) {}
 
 func (h *roleHandler) RemovePermissionFromRole(c *gin.Context) {}
 
-func (h *roleHandler) DeleteRole(c *gin.Context) {}
+func (h *roleHandler) DeleteRole(c *gin.Context) {
+	id := c.Param("id")
+	if err := h.roleService.DeleteRole(id); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Role deleted successfully"})
+}
