@@ -1,0 +1,37 @@
+package ports
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
+)
+
+// RoleHandler is a role handler interface for request and response handler .
+type RoleHandler interface {
+	GetRole(c *gin.Context)
+	GetRoles(c *gin.Context)
+	CreateRole(c *gin.Context)
+	AddPermissionToRole(c *gin.Context)
+	RemovePermissionFromRole(c *gin.Context)
+	DeleteRole(c *gin.Context)
+}
+
+// RoleService is a service interface for the core to communicate with the adapters' role handlers .
+type RoleService interface {
+	GetAllRoles() ([]domain.Role, error)
+	GetRoleByID(id string) (*domain.Role, error)
+	CreateRole(role *domain.Role) error
+	AddPermission(id string, permission *domain.Permission) error
+	RemovePermission(id string, permission *domain.Permission) error
+	DeleteRole(id string) error
+}
+
+// RoleRepository is the interface for the core to communicate with the adapters' role usecase.
+type RoleRepository interface {
+	GetRoleByName(name string) (*domain.Role, error)
+	GetAllRoles() ([]domain.Role, error)
+	GetRoleByID(id string) (*domain.Role, error)
+	CreateRole(role *domain.Role) error
+	AddPermission(id string, permission *domain.Permission) error
+	RemovePermission(id string, permission *domain.Permission) error
+	DeleteRole(id string) error
+}
