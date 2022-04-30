@@ -10,8 +10,6 @@ type RoleHandler interface {
 	GetRole(c *gin.Context)
 	GetRoles(c *gin.Context)
 	CreateRole(c *gin.Context)
-	AddPermissionToRole(c *gin.Context)
-	RemovePermissionFromRole(c *gin.Context)
 	DeleteRole(c *gin.Context)
 }
 
@@ -20,8 +18,6 @@ type RoleService interface {
 	GetAllRoles() ([]domain.Role, error)
 	GetRoleByID(id string) (*domain.Role, error)
 	CreateRole(role *domain.Role) error
-	AddPermission(id string, permission *domain.Permission) error
-	RemovePermission(id string, permission *domain.Permission) error
 	DeleteRole(id string) error
 }
 
@@ -31,7 +27,5 @@ type RoleRepository interface {
 	GetAllRoles() ([]domain.Role, error)
 	GetRoleByID(id string) (*domain.Role, error)
 	CreateRole(role *domain.Role) error
-	AddPermission(id string, permission *domain.Permission) error
-	RemovePermission(id string, permission *domain.Permission) error
 	DeleteRole(id string) error
 }

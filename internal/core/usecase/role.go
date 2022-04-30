@@ -35,12 +35,6 @@ func (r *roleService) CreateRole(role *domain.Role) error {
 	return fmt.Errorf("role title already exist")
 }
 
-func (r *roleService) AddPermission(id string, permission *domain.Permission) error {
-	return r.roleRepo.AddPermission(id, permission)
-}
-func (r *roleService) RemovePermission(id string, permission *domain.Permission) error {
-	return r.roleRepo.RemovePermission(id, permission)
-}
 func (r *roleService) DeleteRole(id string) error {
 	return r.roleRepo.DeleteRole(strings.TrimSpace(id))
 }

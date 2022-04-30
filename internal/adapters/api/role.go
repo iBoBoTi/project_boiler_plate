@@ -56,10 +56,6 @@ func (h *roleHandler) GetRoles(c *gin.Context) {
 	c.JSON(200, gin.H{"roles": roles})
 }
 
-func (h *roleHandler) AddPermissionToRole(c *gin.Context) {}
-
-func (h *roleHandler) RemovePermissionFromRole(c *gin.Context) {}
-
 func (h *roleHandler) DeleteRole(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.roleService.DeleteRole(id); err != nil {

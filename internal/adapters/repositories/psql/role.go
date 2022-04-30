@@ -68,12 +68,6 @@ func (r *roleRepository) CreateRole(role *domain.Role) error {
 	return nil
 }
 
-func (r *roleRepository) AddPermission(id string, permission *domain.Permission) error {
-	return nil
-}
-func (r *roleRepository) RemovePermission(id string, permission *domain.Permission) error {
-	return nil
-}
 func (r *roleRepository) DeleteRole(id string) error {
 	queryString := `DELETE FROM roles WHERE id = $1`
 	cmdTag, err := r.db.Exec(context.Background(), queryString, id)
