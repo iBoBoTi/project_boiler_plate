@@ -45,7 +45,7 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	permissionRouter.GET("/", permissionHandler.GetAllPermissions)
 	permissionRouter.DELETE("/:id", permissionHandler.DeletePermission)
 
-	//Role
+	// Role
 	roleRepo := psql.NewRoleRepository(db.Pool)
 	roleService := usecase.NewRoleService(roleRepo)
 	roleHandler := api.NewRoleHandler(roleService, permissionService, s.log)
@@ -55,6 +55,16 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	roleRouter.POST("/", roleHandler.CreateRole)
 	roleRouter.GET("/", roleHandler.GetRoles)
 	roleRouter.DELETE("/:id", roleHandler.DeleteRole)
+
+	// Role Permissions
+	rolePermissionRepo := psql.NewRolePermissionsRepository(db.Pool, s.log)
+	rolePermissionService := usecase.NewRolePermissionsService(rolePermissionRepo, s.log)
+	rolePermissionHandler := api.NewRolePermissionsHandler(rolePermissionService, s.log)
+
+	rolePermissionRouter := v1.Group("/role-permissions")
+	rolePermissionRouter.POST("/", rolePermissionHandler.AddPermissionsToRole)
+	rolePermissionRouter.GET("/:role_id", rolePermissionHandler.GetAllPermissionsForRole)
+	rolePermissionRouter.DELETE("/:role_id/:permission_id", rolePermissionHandler.RemovePermissionFromRole)
 
 	//User
 	userRepo := psql.NewUserRepository(db.Pool)
