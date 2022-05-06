@@ -7,8 +7,8 @@ import (
 
 // RoleHandler is a role handler interface for request and response handler .
 type RoleHandler interface {
-	GetRole(c *gin.Context)
-	GetRoles(c *gin.Context)
+	GetRoleByID(c *gin.Context)
+	GetAllRoles(c *gin.Context)
 	CreateRole(c *gin.Context)
 	DeleteRole(c *gin.Context)
 }
