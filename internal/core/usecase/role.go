@@ -25,14 +25,14 @@ func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
 	return r.roleRepo.GetRoleByID(strings.TrimSpace(id))
 }
 
-func (r *roleService) CreateRole(role *domain.Role) error {
+func (r *roleService) CreateRole(role *domain.Role) (*domain.Role, error) {
 	role.ID = uuid.New().String()
 	role.Title = strings.ToLower(strings.ReplaceAll(strings.TrimSpace(role.Title), " ", "_"))
 	_, err := r.roleRepo.GetRoleByName(role.Title)
 	if err != nil {
 		return r.roleRepo.CreateRole(role)
 	}
-	return fmt.Errorf("role title already exist")
+	return nil, fmt.Errorf("role title already exist")
 }
 
 func (r *roleService) DeleteRole(id string) error {
