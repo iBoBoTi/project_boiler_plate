@@ -17,7 +17,7 @@ type RoleHandler interface {
 type RoleService interface {
 	GetAllRoles() ([]domain.Role, error)
 	GetRoleByID(id string) (*domain.Role, error)
-	CreateRole(role *domain.Role) error
+	CreateRole(role *domain.Role) (*domain.Role, error)
 	DeleteRole(id string) error
 }
 
@@ -26,6 +26,6 @@ type RoleRepository interface {
 	GetRoleByName(name string) (*domain.Role, error)
 	GetAllRoles() ([]domain.Role, error)
 	GetRoleByID(id string) (*domain.Role, error)
-	CreateRole(role *domain.Role) error
+	CreateRole(role *domain.Role) (*domain.Role, error)
 	DeleteRole(id string) error
 }
