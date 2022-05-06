@@ -29,36 +29,36 @@ func (h *roleHandler) CreateRole(c *gin.Context) {
 		return
 	}
 	if err := h.roleService.CreateRole(&role); err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "failed to create role", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "role created successfully", http.StatusCreated, nil, nil)
+	response.JSON(c, "success creating role", http.StatusCreated, nil, nil)
 }
 
-func (h *roleHandler) GetRole(c *gin.Context) {
+func (h *roleHandler) GetRoleByID(c *gin.Context) {
 	id := c.Param("id")
 	role, err := h.roleService.GetRoleByID(id)
 	if err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "failed to find role", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "role gotten", http.StatusCreated, role, nil)
+	response.JSON(c, "success finding role", http.StatusOK, role, nil)
 }
 
-func (h *roleHandler) GetRoles(c *gin.Context) {
+func (h *roleHandler) GetAllRoles(c *gin.Context) {
 	roles, err := h.roleService.GetAllRoles()
 	if err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "invalid_input", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "roles gotten", http.StatusCreated, roles, nil)
+	response.JSON(c, "roles gotten", http.StatusOK, roles, nil)
 }
 
 func (h *roleHandler) DeleteRole(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.roleService.DeleteRole(id); err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "failed to delete role", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "roles deleted successfully", http.StatusCreated, nil, nil)
+	response.JSON(c, "success in deleting role", http.StatusOK, nil, nil)
 }
