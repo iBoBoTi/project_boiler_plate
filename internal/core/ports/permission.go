@@ -15,7 +15,7 @@ type PermissionHandler interface {
 
 // PermissionService is a service interface for the core to communicate with the adapters' permission handlers .
 type PermissionService interface {
-	CreatePermission(permission *domain.Permission) error
+	CreatePermission(permission *domain.Permission) (*domain.Permission, error)
 	DeletePermission(id string) error
 	GetPermissionByID(id string) (*domain.Permission, error)
 	GetAllPermissions() ([]domain.Permission, error)
@@ -23,9 +23,9 @@ type PermissionService interface {
 
 // PermissionRepository is the interface for the core to communicate with the adapters' permission usecase.
 type PermissionRepository interface {
-	CreatePermission(permission *domain.Permission) error
+	CreatePermission(permission *domain.Permission) (*domain.Permission, error)
 	DeletePermission(id string) error
-	GetPermission(id string) (*domain.Permission, error)
+	GetPermissionByID(id string) (*domain.Permission, error)
 	GetPermissionByTitle(title string) (*domain.Permission, error)
 	GetAllPermissions() ([]domain.Permission, error)
 }
