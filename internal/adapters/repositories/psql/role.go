@@ -56,16 +56,16 @@ func (r *roleRepository) GetRoleByName(name string) (*domain.Role, error) {
 	return &role, nil
 }
 
-func (r *roleRepository) CreateRole(role *domain.Role) error {
+func (r *roleRepository) CreateRole(role *domain.Role) (*domain.Role, error) {
 	queryString := `INSERT INTO roles (id, title, description) VALUES ($1, $2, $3)`
 	cmdTag, err := r.db.Exec(context.Background(), queryString, role.ID, role.Title, role.Description)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if cmdTag.RowsAffected() != 1 {
-		return errors.New("role not created")
+		return nil, errors.New("role not created")
 	}
-	return nil
+	return role, nil
 }
 
 func (r *roleRepository) DeleteRole(id string) error {
