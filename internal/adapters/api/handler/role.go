@@ -28,11 +28,12 @@ func (h *roleHandler) CreateRole(c *gin.Context) {
 		response.JSON(c, "invalid_request_body", http.StatusBadRequest, nil, []string{err.Error()})
 		return
 	}
-	if err := h.roleService.CreateRole(&role); err != nil {
+	resultRole, err := h.roleService.CreateRole(&role)
+	if err != nil {
 		response.JSON(c, "failed to create role", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "success creating role", http.StatusCreated, nil, nil)
+	response.JSON(c, "success creating role", http.StatusCreated, resultRole, nil)
 }
 
 func (h *roleHandler) GetRoleByID(c *gin.Context) {
@@ -51,7 +52,7 @@ func (h *roleHandler) GetAllRoles(c *gin.Context) {
 		response.JSON(c, "invalid_input", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "roles gotten", http.StatusOK, roles, nil)
+	response.JSON(c, "success retrieving roles", http.StatusOK, roles, nil)
 }
 
 func (h *roleHandler) DeleteRole(c *gin.Context) {
