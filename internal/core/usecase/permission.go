@@ -18,20 +18,20 @@ func NewPermissionService(permissionRepo ports.PermissionRepository) ports.Permi
 	}
 }
 
-func (p *permissionService) CreatePermission(permission *domain.Permission) error {
+func (p *permissionService) CreatePermission(permission *domain.Permission) (*domain.Permission, error) {
 	permission.ID = uuid.New().String()
 	permission.Title = strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(permission.Title), " ", "_"))
 	_, err := p.permissionRepo.GetPermissionByTitle(permission.Title)
 	if err != nil {
 		return p.permissionRepo.CreatePermission(permission)
 	}
-	return fmt.Errorf("permission title already exist")
+	return nil, fmt.Errorf("permission title already exist")
 }
 func (p *permissionService) DeletePermission(id string) error {
 	return p.permissionRepo.DeletePermission(strings.TrimSpace(id))
 }
 func (p *permissionService) GetPermissionByID(id string) (*domain.Permission, error) {
-	return p.permissionRepo.GetPermission(strings.TrimSpace(id))
+	return p.permissionRepo.GetPermissionByID(strings.TrimSpace(id))
 }
 func (p *permissionService) GetAllPermissions() ([]domain.Permission, error) {
 	return p.permissionRepo.GetAllPermissions()
