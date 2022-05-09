@@ -18,15 +18,15 @@ func NewPermissionRepository(db *pgxpool.Pool) ports.PermissionRepository {
 }
 
 func (p *permissionRepository) CreatePermission(permission *domain.Permission) (*domain.Permission, error) {
-	queryString := `INSERT INTO permissions (id, title) VALUES ($1, $2)`
-	cmdTag, err := p.db.Exec(context.Background(), queryString, permission.ID, permission.Title)
+	queryString := `INSERT INTO permissions (id, title) VALUES ($1, $2) RETURNING *`
+	result := &domain.Permission{}
+	row := p.db.QueryRow(context.Background(), queryString, permission.ID, permission.Title)
+	err := row.Scan(&result.ID, &result.Title, &result.CreatedAt, &result.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
-	if cmdTag.RowsAffected() != 1 {
-		return nil, errors.New("permission not created")
-	}
-	return permission, nil
+
+	return result, nil
 }
 
 func (p *permissionRepository) GetPermissionByTitle(title string) (*domain.Permission, error) {
