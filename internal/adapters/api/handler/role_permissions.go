@@ -27,7 +27,7 @@ func (h *rolePermissionsHandler) AddPermissionsToRole(c *gin.Context) {
 		return
 	}
 	if err := h.rolePermissionsService.AddPermissionsToRole(&rolePermissions); err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "failed to add permissions", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 	response.JSON(c, "permissions added successfully", http.StatusOK, nil, nil)
@@ -37,7 +37,7 @@ func (h *rolePermissionsHandler) RemovePermissionFromRole(c *gin.Context) {
 	roleID := c.Param("role_id")
 	permissionID := c.Param("permission_id")
 	if err := h.rolePermissionsService.RemovePermissionFromRole(roleID, permissionID); err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 	response.JSON(c, "permission removed successfully", http.StatusOK, nil, nil)
@@ -47,7 +47,7 @@ func (h *rolePermissionsHandler) GetAllPermissionsForRole(c *gin.Context) {
 	roleID := c.Param("role_id")
 	permissions, err := h.rolePermissionsService.GetAllPermissionsForRole(roleID)
 	if err != nil {
-		response.JSON(c, "invalid_input", http.StatusBadRequest, nil, []string{err.Error()})
+		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 	response.JSON(c, "permissions gotten", http.StatusOK, permissions, nil)

@@ -41,11 +41,15 @@ func (h *permissionHandler) CreatePermission(c *gin.Context) {
 func (h *permissionHandler) GetPermissionByID(c *gin.Context) {
 	h.logger.Infof("Get Permission By ID")
 	permissionID := c.Param("id")
-	permission, err := h.permissionService.GetPermissionByID(permissionID)
+	if !domain.IsUUID(permissionID) {
+		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
+		return
+	}
 
+	permission, err := h.permissionService.GetPermissionByID(permissionID)
 	if err != nil {
 		h.logger.Errorf("Get Permission By ID: %s", err.Error())
-		response.JSON(c, "invalid_input", http.StatusNotFound, nil, []string{err.Error()})
+		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 
@@ -59,7 +63,7 @@ func (h *permissionHandler) GetAllPermissions(c *gin.Context) {
 
 	if err != nil {
 		h.logger.Errorf("Get All Permissions: %s", err.Error())
-		response.JSON(c, "failed to find permissions", http.StatusNotFound, nil, []string{err.Error()})
+		response.JSON(c, "failed to find permissions", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 
@@ -70,6 +74,10 @@ func (h *permissionHandler) GetAllPermissions(c *gin.Context) {
 func (h *permissionHandler) DeletePermission(c *gin.Context) {
 	h.logger.Infof("Delete Permission")
 	id := c.Param("id")
+	if !domain.IsUUID(id) {
+		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
+		return
+	}
 
 	if err := h.permissionService.DeletePermission(id); err != nil {
 		h.logger.Errorf("Delete Permission: %s", err.Error())
