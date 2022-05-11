@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"strings"
@@ -19,7 +18,7 @@ func NewPermissionService(permissionRepo ports.PermissionRepository) ports.Permi
 }
 
 func (p *permissionService) CreatePermission(permission *domain.Permission) (*domain.Permission, error) {
-	permission.ID = uuid.New().String()
+	permission.ID = domain.NewUUID()
 	permission.Title = strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(permission.Title), " ", "_"))
 	_, err := p.permissionRepo.GetPermissionByTitle(permission.Title)
 	if err != nil {

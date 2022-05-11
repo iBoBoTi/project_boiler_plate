@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"strings"
@@ -26,7 +25,7 @@ func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
 }
 
 func (r *roleService) CreateRole(role *domain.Role) (*domain.Role, error) {
-	role.ID = uuid.New().String()
+	role.ID = domain.NewUUID()
 	role.Title = strings.ToLower(strings.ReplaceAll(strings.TrimSpace(role.Title), " ", "_"))
 	_, err := r.roleRepo.GetRoleByName(role.Title)
 	if err != nil {
