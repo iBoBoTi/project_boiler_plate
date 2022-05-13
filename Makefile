@@ -7,6 +7,15 @@ export
 run:
 	go run cmd/main.go
 
+postgres:
+	docker run --name postgres14 -p 5432:5432 -e POSTGRES_USER=$(POSTGRES_USER) -e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) -d postgres:14-alpine
+
+createdb:
+	docker exec -it postgres14 createdb --username=$(POSTGRES_USER) --owner=$(POSTGRES_USER) $(POSTGRES_DATABASE)
+
+dropdb:
+	docker exec -it postgres14 dropdb $(POSTGRES_DATABASE)
+
 migrate-up:
 	migrate -path db/migrations -database $(DATABASE_URL) -verbose up
 
