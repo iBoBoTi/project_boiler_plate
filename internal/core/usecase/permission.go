@@ -3,7 +3,10 @@ package usecase
 import (
 	"fmt"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
+	"github.com/iBoBoTi/project_boiler_plate/internal/core/helpers"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +35,10 @@ func (p *permissionService) DeletePermission(id string) error {
 func (p *permissionService) GetPermissionByID(id string) (*domain.Permission, error) {
 	return p.permissionRepo.GetPermissionByID(strings.TrimSpace(id))
 }
-func (p *permissionService) GetAllPermissions() ([]domain.Permission, error) {
-	return p.permissionRepo.GetAllPermissions()
+func (p *permissionService) GetAllPermissions(page int) (*helpers.Paginate, error) {
+	limit, _ := strconv.Atoi(os.Getenv("PAGE_LIMIT"))
+
+	paginate := helpers.NewPaginate(limit, page)
+	paginate.Offset = (page - 1) * limit
+	return p.permissionRepo.GetAllPermissions(paginate)
 }

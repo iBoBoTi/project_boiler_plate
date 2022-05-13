@@ -3,7 +3,10 @@ package usecase
 import (
 	"fmt"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
+	"github.com/iBoBoTi/project_boiler_plate/internal/core/helpers"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -17,8 +20,12 @@ func NewRoleService(roleRepo ports.RoleRepository) ports.RoleService {
 	}
 }
 
-func (r *roleService) GetAllRoles() ([]domain.Role, error) {
-	return r.roleRepo.GetAllRoles()
+func (r *roleService) GetAllRoles(page int) (*helpers.Paginate, error) {
+	limit, _ := strconv.Atoi(os.Getenv("PAGE_LIMIT"))
+
+	paginate := helpers.NewPaginate(limit, page)
+	paginate.Offset = (page - 1) * limit
+	return r.roleRepo.GetAllRoles(paginate)
 }
 func (r *roleService) GetRoleByID(id string) (*domain.Role, error) {
 	return r.roleRepo.GetRoleByID(strings.TrimSpace(id))

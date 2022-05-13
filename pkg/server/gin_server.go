@@ -37,7 +37,7 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	//Permission
 	permissionRepo := psql.NewPermissionRepository(db.Pool)
 	permissionService := usecase.NewPermissionService(permissionRepo)
-	permissionHandler := handler.NewPermissionHandler(permissionService)
+	permissionHandler := handler.NewPermissionHandler(permissionService, s.log)
 
 	permissionRouter := v1.Group("/permissions")
 	permissionRouter.GET("/:id", permissionHandler.GetPermissionByID)
@@ -48,12 +48,12 @@ func (s *ginServer) setAppHandlers(router *gin.Engine) {
 	// Role
 	roleRepo := psql.NewRoleRepository(db.Pool)
 	roleService := usecase.NewRoleService(roleRepo)
-	roleHandler := handler.NewRoleHandler(roleService, permissionService, s.log)
+	roleHandler := handler.NewRoleHandler(roleService, s.log)
 
 	roleRouter := v1.Group("/roles")
-	roleRouter.GET("/:id", roleHandler.GetRole)
+	roleRouter.GET("/:id", roleHandler.GetRoleByID)
 	roleRouter.POST("/", roleHandler.CreateRole)
-	roleRouter.GET("/", roleHandler.GetRoles)
+	roleRouter.GET("/", roleHandler.GetAllRoles)
 	roleRouter.DELETE("/:id", roleHandler.DeleteRole)
 
 	// Role Permissions
@@ -123,7 +123,6 @@ func (s *ginServer) setupRouter() *gin.Engine {
 }
 
 func (s *ginServer) Run() {
-	gin.SetMode(gin.ReleaseMode)
 	gin.Recovery()
 
 	r := s.setupRouter()

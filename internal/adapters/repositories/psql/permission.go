@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
+	"github.com/iBoBoTi/project_boiler_plate/internal/core/helpers"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"math"
 )
 
 type permissionRepository struct {
@@ -63,10 +65,10 @@ func (p *permissionRepository) GetPermissionByID(id string) (*domain.Permission,
 	return &permission, nil
 }
 
-func (p *permissionRepository) GetAllPermissions() ([]domain.Permission, error) {
+func (p *permissionRepository) GetAllPermissions(paginator *helpers.Paginate) (*helpers.Paginate, error) {
 	permissions := make([]domain.Permission, 0)
-	queryString := `SELECT * FROM permissions`
-	rows, err := p.db.Query(context.Background(), queryString)
+	queryString := `SELECT * FROM permissions ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	rows, err := p.db.Query(context.Background(), queryString, paginator.Limit, paginator.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -80,5 +82,11 @@ func (p *permissionRepository) GetAllPermissions() ([]domain.Permission, error) 
 		permissions = append(permissions, permission)
 	}
 
-	return permissions, nil
+	count := 0
+	_ = p.db.QueryRow(context.Background(), `SELECT COUNT(*) FROM roles`).Scan(&count)
+	paginator.TotalRows = count
+	paginator.Rows = permissions
+	paginator.TotalPages = int(math.Ceil(float64(count) / float64(paginator.Limit)))
+
+	return paginator, nil
 }

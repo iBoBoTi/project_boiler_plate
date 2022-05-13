@@ -6,6 +6,7 @@ import (
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"net/http"
+	"strconv"
 )
 
 type roleHandler struct {
@@ -50,12 +51,22 @@ func (h *roleHandler) GetRoleByID(c *gin.Context) {
 }
 
 func (h *roleHandler) GetAllRoles(c *gin.Context) {
-	roles, err := h.roleService.GetAllRoles()
+	p := c.Query("page")
+	if p == "" || p == "0" {
+		p = "1"
+	}
+	page, err := strconv.Atoi(p)
+	if err != nil {
+		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
+	}
+
+	paginatedRoles, err := h.roleService.GetAllRoles(page)
 	if err != nil {
 		response.JSON(c, "failed to find roles", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
-	response.JSON(c, "success retrieving roles", http.StatusOK, roles, nil)
+
+	response.JSON(c, "success retrieving roles", http.StatusOK, paginatedRoles, nil)
 }
 
 func (h *roleHandler) DeleteRole(c *gin.Context) {

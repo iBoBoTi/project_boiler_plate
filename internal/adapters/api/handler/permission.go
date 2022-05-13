@@ -6,6 +6,7 @@ import (
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/domain"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"net/http"
+	"strconv"
 )
 
 type permissionHandler struct {
@@ -59,16 +60,24 @@ func (h *permissionHandler) GetPermissionByID(c *gin.Context) {
 
 func (h *permissionHandler) GetAllPermissions(c *gin.Context) {
 	h.logger.Infof("Get All Permissions")
-	permissions, err := h.permissionService.GetAllPermissions()
+	p := c.Query("page")
+	if p == "" || p == "0" {
+		p = "1"
+	}
+	page, err := strconv.Atoi(p)
+	if err != nil {
+		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
+	}
 
+	paginatedPermissions, err := h.permissionService.GetAllPermissions(page)
 	if err != nil {
 		h.logger.Errorf("Get All Permissions: %s", err.Error())
 		response.JSON(c, "failed to find permissions", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 
-	h.logger.Infof("Get All Permissions: %d", len(permissions))
-	response.JSON(c, "success in finding permissions", http.StatusOK, permissions, nil)
+	h.logger.Infof("Get All Permissions")
+	response.JSON(c, "success in finding permissions", http.StatusOK, paginatedPermissions, nil)
 }
 
 func (h *permissionHandler) DeletePermission(c *gin.Context) {
