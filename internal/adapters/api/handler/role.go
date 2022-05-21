@@ -71,6 +71,7 @@ func (h *roleHandler) GetAllRoles(c *gin.Context) {
 		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
 	}
 
+	h.logger.Infof("getting all roles")
 	paginatedRoles, err := h.roleService.GetAllRoles(page)
 	if err != nil {
 		h.logger.Errorf("get all roles failed")
