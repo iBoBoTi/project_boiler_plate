@@ -21,7 +21,7 @@ func NewRolePermissionsHandler(rolePermissionsService ports.RolePermissionsServi
 }
 
 func (h *rolePermissionsHandler) AddPermissionsToRole(c *gin.Context) {
-	rolePermissions := domain.RolePermissions{}
+	var rolePermissions domain.RolePermissions
 
 	if err := c.ShouldBindJSON(&rolePermissions); err != nil {
 		response.JSON(c, "invalid_request_body", http.StatusBadRequest, nil, []string{err.Error()})
@@ -50,7 +50,7 @@ func (h *rolePermissionsHandler) RemovePermissionFromRole(c *gin.Context) {
 	}
 	if err := h.rolePermissionsService.RemovePermissionFromRole(roleID, permissionID); err != nil {
 		h.logger.Errorf("removing permission with ID %s from role with ID %s failed: %s", permissionID, roleID, err.Error())
-		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
+		response.JSON(c, "role not found", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
 
@@ -69,10 +69,10 @@ func (h *rolePermissionsHandler) GetAllPermissionsForRole(c *gin.Context) {
 	h.logger.Infof("get all permissions for role with ID %s", roleID)
 	permissions, err := h.rolePermissionsService.GetAllPermissionsForRole(roleID)
 	if err != nil {
-		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
+		response.JSON(c, "failed to find roles", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 
-	h.logger.Infof("getting all permissions for role with ID %s", roleID)
+	h.logger.Infof("getting all permissions for role with ID %s successful", roleID)
 	response.JSON(c, "permissions gotten", http.StatusOK, permissions, nil)
 }

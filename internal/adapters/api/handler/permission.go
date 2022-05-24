@@ -22,8 +22,8 @@ func NewPermissionHandler(permissionService ports.PermissionService, logger port
 }
 
 func (h *permissionHandler) CreatePermission(c *gin.Context) {
-	h.logger.Infof("Creating Permission")
-	permission := domain.Permission{}
+	h.logger.Infof("creating permission")
+	var permission domain.Permission
 
 	if err := c.ShouldBindJSON(&permission); err != nil {
 		response.JSON(c, "invalid_request_body", http.StatusBadRequest, nil, []string{err.Error()})
@@ -42,26 +42,26 @@ func (h *permissionHandler) CreatePermission(c *gin.Context) {
 }
 
 func (h *permissionHandler) GetPermissionByID(c *gin.Context) {
-	h.logger.Infof("Get Permission By ID")
 	permissionID := c.Param("id")
 	if !domain.IsUUID(permissionID) {
 		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
 		return
 	}
 
+	h.logger.Infof("get permission by ID %v", permissionID)
 	permission, err := h.permissionService.GetPermissionByID(permissionID)
 	if err != nil {
-		h.logger.Errorf("Get Permission By ID %s Failed: %s", permissionID, err.Error())
-		response.JSON(c, "invalid_input", http.StatusInternalServerError, nil, []string{err.Error()})
+		h.logger.Errorf("get permission by ID %s failed: %s", permissionID, err.Error())
+		response.JSON(c, "permission not found", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
 
-	h.logger.Infof("Get Permission By ID: %s successful", permission.ID)
+	h.logger.Infof("get permission by ID: %s successful", permission.ID)
 	response.JSON(c, "success in finding permission", http.StatusOK, permission, nil)
 }
 
 func (h *permissionHandler) GetAllPermissions(c *gin.Context) {
-	h.logger.Infof("Get All Permissions")
+	h.logger.Infof("get all permissions")
 	p := c.Query("page")
 	if p == "" || p == "0" {
 		p = "1"
@@ -73,19 +73,19 @@ func (h *permissionHandler) GetAllPermissions(c *gin.Context) {
 
 	paginatedPermissions, err := h.permissionService.GetAllPermissions(page)
 	if err != nil {
-		h.logger.Errorf("Get All Permissions Failed: %s", err.Error())
+		h.logger.Errorf("get all permissions failed: %s", err.Error())
 		response.JSON(c, "failed to find permissions", http.StatusInternalServerError, nil, []string{err.Error()})
 		return
 	}
 
-	h.logger.Infof("Get All Permissions Page %v of %v", paginatedPermissions.Page, paginatedPermissions.TotalPages)
+	h.logger.Infof("get all permissions page %v of %v", paginatedPermissions.Page, paginatedPermissions.TotalPages)
 	response.JSON(c, "success in finding permissions", http.StatusOK, paginatedPermissions, nil)
 }
 
 func (h *permissionHandler) DeletePermission(c *gin.Context) {
 	permissionID := c.Param("id")
 
-	h.logger.Infof("Delete Permission with ID %s", permissionID)
+	h.logger.Infof("delete permission with ID %s", permissionID)
 
 	if !domain.IsUUID(permissionID) {
 		response.JSON(c, "invalid_request", http.StatusBadRequest, nil, nil)
@@ -93,11 +93,11 @@ func (h *permissionHandler) DeletePermission(c *gin.Context) {
 	}
 
 	if err := h.permissionService.DeletePermission(permissionID); err != nil {
-		h.logger.Errorf("Delete Permission with ID %s failed: %s", permissionID, err.Error())
-		response.JSON(c, "failed to delete permission", http.StatusInternalServerError, nil, []string{err.Error()})
+		h.logger.Errorf("delete permission with ID %s failed: %s", permissionID, err.Error())
+		response.JSON(c, "failed to delete permission, permission not found", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
 
-	h.logger.Infof("Delete Permission with PermissionID: %s successful", permissionID)
+	h.logger.Infof("delete permission with permissionID: %s successful", permissionID)
 	response.JSON(c, "permission successfully deleted", http.StatusOK, nil, nil)
 }

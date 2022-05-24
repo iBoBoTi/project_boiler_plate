@@ -24,7 +24,7 @@ func NewRoleHandler(roleService ports.RoleService, logger ports.Logger) ports.Ro
 func (h *roleHandler) CreateRole(c *gin.Context) {
 	h.logger.Infof("creating role")
 
-	role := domain.Role{}
+	var role domain.Role
 	if err := c.ShouldBindJSON(&role); err != nil {
 		response.JSON(c, "invalid_request_body", http.StatusBadRequest, nil, []string{err.Error()})
 		return
@@ -53,7 +53,7 @@ func (h *roleHandler) GetRoleByID(c *gin.Context) {
 	role, err := h.roleService.GetRoleByID(roleID)
 	if err != nil {
 		h.logger.Errorf("get role with id %s failed", roleID)
-		response.JSON(c, "failed to find role", http.StatusInternalServerError, nil, []string{err.Error()})
+		response.JSON(c, "role not found", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
 
@@ -94,7 +94,7 @@ func (h *roleHandler) DeleteRole(c *gin.Context) {
 
 	if err := h.roleService.DeleteRole(roleID); err != nil {
 		h.logger.Errorf("delete role with id %s failed: %s", roleID, err.Error())
-		response.JSON(c, "failed to delete role", http.StatusInternalServerError, nil, []string{err.Error()})
+		response.JSON(c, "role not found", http.StatusNotFound, nil, []string{err.Error()})
 		return
 	}
 
