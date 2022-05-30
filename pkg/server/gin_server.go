@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/iBoBoTi/project_boiler_plate/internal/adapters/api"
+	"github.com/iBoBoTi/project_boiler_plate/internal/adapters/api/handler"
 	"github.com/iBoBoTi/project_boiler_plate/internal/adapters/repositories/psql"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/ports"
 	"github.com/iBoBoTi/project_boiler_plate/internal/core/usecase"
@@ -31,12 +31,46 @@ func newGinServer(l ports.Logger, r *router.Router) *ginServer {
 }
 
 func (s *ginServer) setAppHandlers(router *gin.Engine) {
+	v1 := router.Group("/api/v1")
 	db, _ := database.NewDatabaseFactory(database.InstancePostgres)
+
+	//Permission
+	permissionRepo := psql.NewPermissionRepository(db.Pool)
+	permissionService := usecase.NewPermissionService(permissionRepo)
+	permissionHandler := handler.NewPermissionHandler(permissionService, s.log)
+
+	permissionRouter := v1.Group("/permissions")
+	permissionRouter.GET("/:id", permissionHandler.GetPermissionByID)
+	permissionRouter.POST("/", permissionHandler.CreatePermission)
+	permissionRouter.GET("/", permissionHandler.GetAllPermissions)
+	permissionRouter.DELETE("/:id", permissionHandler.DeletePermission)
+
+	// Role
+	roleRepo := psql.NewRoleRepository(db.Pool)
+	roleService := usecase.NewRoleService(roleRepo)
+	roleHandler := handler.NewRoleHandler(roleService, s.log)
+
+	roleRouter := v1.Group("/roles")
+	roleRouter.GET("/:id", roleHandler.GetRoleByID)
+	roleRouter.POST("/", roleHandler.CreateRole)
+	roleRouter.GET("/", roleHandler.GetAllRoles)
+	roleRouter.DELETE("/:id", roleHandler.DeleteRole)
+
+	// Role Permissions
+	rolePermissionRepo := psql.NewRolePermissionsRepository(db.Pool, s.log)
+	rolePermissionService := usecase.NewRolePermissionsService(rolePermissionRepo, s.log)
+	rolePermissionHandler := handler.NewRolePermissionsHandler(rolePermissionService, s.log)
+
+	rolePermissionRouter := v1.Group("/role-permissions")
+	rolePermissionRouter.POST("/", rolePermissionHandler.AddPermissionsToRole)
+	rolePermissionRouter.GET("/:role_id", rolePermissionHandler.GetAllPermissionsForRole)
+	rolePermissionRouter.DELETE("/:role_id/:permission_id", rolePermissionHandler.RemovePermissionFromRole)
+
+	//User
 	userRepo := psql.NewUserRepository(db.Pool)
 	userService := usecase.NewUserService(userRepo)
-	userHandler := api.NewUserHandler(userService, s.log)
+	userHandler := handler.NewUserHandler(userService, s.log)
 
-	v1 := router.Group("/api/v1")
 	userRouter := v1.Group("/users")
 	userRouter.GET("/:id", userHandler.GetUserByID)
 	userRouter.POST("/", userHandler.CreateUser)
@@ -89,7 +123,6 @@ func (s *ginServer) setupRouter() *gin.Engine {
 }
 
 func (s *ginServer) Run() {
-	gin.SetMode(gin.ReleaseMode)
 	gin.Recovery()
 
 	r := s.setupRouter()
